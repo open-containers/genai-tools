@@ -1,0 +1,25 @@
+version: "3"
+
+tasks:
+  grype-scan:
+    desc: Scans image, SBOM, fs using Anchore grype
+    deps: [grype-image]
+    cmds:
+      - docker run -v $(pwd):/app ghcr.io/open-containers/grype-task:latest {{ .CLI_ARGS }}
+      # - docker run -v $(pwd):/app ghcr.io/open-containers/grype-task:latest grype nginx -o json --file nginx-result.json
+
+  syft-sbom:
+    desc: generate SBOM for a project or container image
+    deps: [syft-image]
+    cmds:
+      - docker run -v $(pwd):/app ghcr.io/open-containers/syft-task:latest {{ .CLI_ARGS }}
+
+  grype-image:
+    desc: Pulls required grype image
+    cmds:
+      - docker pull ghcr.io/open-containers/grype-task:latest
+
+  syft-image:
+    desc: Pulls required syft image
+    cmds:
+      - docker pull ghcr.io/open-containers/syft-task:latest
