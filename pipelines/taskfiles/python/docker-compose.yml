@@ -1,0 +1,27 @@
+services:
+  fuzz:
+    container_name: fuzz-simple-example-fuzz
+    image: fuzz-simple-example
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      python fuzz.py -atheris_runs=100000
+    volumes:
+      - ./fuzz_simple_example:/app
+
+  coverage:
+    container_name: fuzz-simple-example-coverage
+    image: fuzz-simple-example
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      bash -c 'python -m coverage run fuzz.py -atheris_runs=5000000 &&
+      python -m coverage html &&
+      cd htmlcov &&
+      python -m http.server 8000'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fuzz_simple_example:/app

@@ -1,0 +1,14 @@
+version: "3"
+
+# Required Renovate config
+tasks:
+  renovate:
+    desc: Runs revovate tasks
+    deps: [renovate-image]
+    cmds:
+      - docker run -v $(pwd):/app ghcr.io/open-containers/renovate-task:latest {{ .CLI_ARGS }}
+
+  renovate-image:
+    desc: Pull required renovate image
+    cmds:
+      - docker pull ghcr.io/open-containers/renovate-task:latest
