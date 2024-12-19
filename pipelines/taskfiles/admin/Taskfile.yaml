@@ -1,0 +1,15 @@
+version: "3"
+
+task:
+  cleanup:
+    desc: Performs clean-up actions on server
+    cmds:
+      - docker system prune -a --volumes
+      - docker container prune
+      - docker volume prune -a
+    preconditions:
+      - sh: |
+          if ! command -v docker &> /dev/null; then
+            echo "docker could not be found"
+            exit 1
+          fi

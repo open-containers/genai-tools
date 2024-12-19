@@ -1,0 +1,17 @@
+# Taskfile.yml
+version: "3"
+
+tasks:
+  build:
+    desc: "Build the Docker image"
+    cmds:
+      - docker build -t my_pytest_app .
+
+  test:
+    desc: "Run tests in the Docker container"
+    cmds:
+      - docker run --rm -v ${PWD}/app:/app my_pytest_app
+
+  test_all:
+    desc: "Build the Docker image and run tests"
+    deps: [build, test]

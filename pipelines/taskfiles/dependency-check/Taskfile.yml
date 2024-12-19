@@ -1,0 +1,13 @@
+version: "3"
+tasks:
+  depcheck-scan:
+    desc: "run dependency check"
+    deps: [dependency-check-image]
+    cmds:
+      # Dockerfile needs to call the task and dependency-check executables from ENTRYPOIMNT
+      # - docker run -v $(pwd)"/app" ghcr.io/open-containers/dependency-check-task:latest  --format json --project "petclinic" --scan /tmp/spring-petclinic/target/petclinic.jar
+      - docker run -v $(pwd):/app ghcr.io/open-containers/dependency-check-task:latest {{ .CLI_ARGS }}
+  dependency-check-image:
+    desc: Pulls the relevant docker image required for the task
+    cmds:
+      - docker pull ghcr.io/open-containers/dependency-check-task:latest

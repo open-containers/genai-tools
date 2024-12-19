@@ -1,0 +1,60 @@
+version: "3"
+tasks:
+  up:
+    desc: "Bring up SonarQube using Docker Compose"
+    deps: [docker-image]
+    cmds:
+      - docker compose up -d
+
+  down:
+    deps: [docker-image]
+    desc: "Take down SonarQube"
+    cmds:
+      - docker-compose down
+
+  restart:
+    deps: [docker-image]
+    desc: "Restart SonarQube services"
+    cmds:
+      - task: down
+      - task: up
+
+  logs:
+    desc: "Show logs of SonarQube service"
+    deps: [docker-image]
+    cmds:
+
+  status:
+    desc: "Check status of SonarQube services"
+    cmds:
+      - docker compose ps
+
+  cleanup:
+    desc: "Clean up SonarQube containers, volumes, and images"
+    deps: [docker-image]
+    cmds:
+      - docker compose down -v
+      - docker compose rm -f
+      - docker system prune -f
+
+  sonar_scan:
+    desc: "Run SonarQube analysis using sonar-cli in Docker"
+    deps: [docker-image]
+    cmds:
+      - docker run --rm \
+        --network host \
+        -v $(pwd):/usr/src \
+        -v (pwd):/app \
+        -w /usr/src \
+        ghcr.io/open-containers/sonarqube-task:latest \
+        sonar-scanner-cli \
+        -Dsonar.projectKey=test \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://localhost:9091 \
+        -Dsonar.login=sqp_c15901a381486fe40a4dd90c58c8a5ee7600dfdc
+
+  sonarqube-image:
+    desc: pull sonarqube image
+    deps: [sonarqube-image]
+    cmds:
+      - docker pull ghcr.io/open-containers/sonarqube-task:latest
